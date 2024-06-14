@@ -2,31 +2,27 @@ package Parte1;
 
 import Modelo.ListaCategorias;
 import Modelo.ListaInsumos;
-import Modelo.Categoria;
-import Modelo.Insumo;
 import Libreria.Librerias;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
-public class Practica03_a extends JFrame implements ActionListener {
+public class Practica03_a extends JFrame {
 
-    private ListaCategorias listaCategorias;
-    private ListaInsumos listaInsumos;
-    private Librerias libreria;
-    private DefaultListModel<String> listModelCategorias;
-    private DefaultTableModel modelInsumos;
-    private JTextField txtId;
-    private JTextField txtNombre;
-    private JComboBox<String> comboCategoria;
-    private JTable tableInsumos;
-    private JLabel lblImagen;
+    ListaCategorias listaCategorias;
+    ListaInsumos listaInsumos;
+    Librerias libreria;
+    DefaultListModel<String> listModelCategorias;
+    DefaultTableModel modelInsumos;
+    JTextField txtId;
+    JTextField txtNombre;
+    JComboBox<String> comboCategoria;
+    JTable tableInsumos;
+    JLabel lblImagen;
+    JButton btnAgregar;
+    JButton btnEliminar;
+    JButton btnSalir;
 
     public Practica03_a() {
         listaCategorias = new ListaCategorias();
@@ -73,18 +69,18 @@ public class Practica03_a extends JFrame implements ActionListener {
         panelFormulario.add(comboCategoria);
 
         lblImagen = new JLabel();
-        lblImagen.setBounds(354, 10, 142, 107); 
+        lblImagen.setBounds(354, 10, 142, 107);
         panelFormulario.add(lblImagen);
 
-        JButton btnAgregar = new JButton("Agregar");
+        btnAgregar = new JButton("Agregar");
         btnAgregar.setBounds(10, 110, 80, 25);
         panelFormulario.add(btnAgregar);
 
-        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar = new JButton("Eliminar");
         btnEliminar.setBounds(100, 110, 80, 25);
         panelFormulario.add(btnEliminar);
 
-        JButton btnSalir = new JButton("Salir");
+        btnSalir = new JButton("Salir");
         btnSalir.setBounds(190, 110, 80, 25);
         panelFormulario.add(btnSalir);
 
@@ -94,124 +90,5 @@ public class Practica03_a extends JFrame implements ActionListener {
         panelFormulario.add(scrollPane);
 
         getContentPane().add(panelFormulario);
-
-        btnAgregar.addActionListener(this);
-        btnEliminar.addActionListener(this);
-        btnSalir.addActionListener(this);
-
-        tableInsumos.setRowSelectionAllowed(true);
-        ListSelectionModel cellSelectionModel = tableInsumos.getSelectionModel();
-        cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int fila = tableInsumos.getSelectedRow();
-                if (fila >= 0) {
-                    String id = String.format("%03d", Integer.parseInt((String) tableInsumos.getValueAt(fila, 0)));
-                    actualizarImagen(id + ".png");
-                }
-            }
-        });
-
-        agregarCategoriasIniciales();
-        actualizarTabla();
-        actualizarImagen("000.png");
-        cargarCategorias();
-    }
-
-    private void agregarCategoriasIniciales() {
-        listaCategorias.agregarCategoria(new Categoria(1, "Materiales"));
-        listaCategorias.agregarCategoria(new Categoria(2, "Mano de Obra"));
-        listaCategorias.agregarCategoria(new Categoria(3, "Maquinaria y Equipo"));
-    }
-
-    private void actualizarTabla() {
-        modelInsumos.setRowCount(0);
-        for (Insumo insumo : listaInsumos.getInsumos()) {
-            modelInsumos.addRow(new Object[]{String.format("%03d", insumo.getId()), insumo.getNombre(), insumo.getCategoria().getNombre()});
-        }
-    }
-
-    private void actualizarImagen(String archivoImagen) {
-        int width = lblImagen.getWidth();
-        int height = lblImagen.getHeight();
-        if (width > 0 && height > 0) {
-            String ruta = System.getProperty("user.dir") + File.separator + "Imagenes" + File.separator + archivoImagen;
-            lblImagen.setIcon(libreria.EtiquetaImagen(ruta, width, height));
-        } else {
-            lblImagen.setText("Imagen no disponible");
-        }
-    }
-
-    private void cargarCategorias() {
-        comboCategoria.removeAllItems();
-        for (Categoria categoria : listaCategorias.getCategorias()) {
-            comboCategoria.addItem(categoria.getNombre());
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String comando = e.getActionCommand();
-        switch (comando) {
-            case "Agregar":
-                agregarInsumo();
-                break;
-            case "Eliminar":
-                eliminarInsumo();
-                break;
-            case "Salir":
-                System.exit(0);
-                break;
-        }
-    }
-
-    private void agregarInsumo() {
-        String idStr = txtId.getText().trim();
-        String nombre = txtNombre.getText().trim();
-        String categoriaNombre = (String) comboCategoria.getSelectedItem();
-
-        if (!idStr.isEmpty() && !nombre.isEmpty() && categoriaNombre != null && !categoriaNombre.isEmpty()) {
-            int id = Integer.parseInt(idStr);
-            Categoria categoria = buscarCategoriaPorNombre(categoriaNombre);
-            if (categoria == null) {
-                categoria = new Categoria(listaCategorias.getCategorias().size() + 1, categoriaNombre);
-                listaCategorias.agregarCategoria(categoria);
-            }
-            Insumo insumo = new Insumo(id, nombre, categoria);
-            listaInsumos.agregarInsumo(insumo);
-            actualizarTabla();
-            txtId.setText("");
-            txtNombre.setText("");
-            comboCategoria.setSelectedIndex(-1);
-        } else {
-            JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private Categoria buscarCategoriaPorNombre(String nombre) {
-        for (Categoria categoria : listaCategorias.getCategorias()) {
-            if (categoria.getNombre().equals(nombre)) {
-                return categoria;
-            }
-        }
-        return null;
-    }
-
-    private void eliminarInsumo() {
-        int selectedRow = tableInsumos.getSelectedRow();
-        if (selectedRow >= 0) {
-            int id = Integer.parseInt((String) tableInsumos.getValueAt(selectedRow, 0));
-            listaInsumos.eliminarInsumo(listaInsumos.buscarInsumo(id));
-            actualizarTabla();
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un insumo para eliminar.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Practica03_a().setVisible(true));
     }
 }

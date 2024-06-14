@@ -2,22 +2,21 @@ package Parte1;
 
 import Modelo.ListaCategorias;
 import Modelo.ListaInsumos;
-import Modelo.Categoria;
-import Modelo.Insumo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Practica02_a extends JFrame {
 
-    private ListaCategorias listaCategorias;
-    private ListaInsumos listaInsumos;
-    private DefaultListModel<String> listModelCategorias;
-    private JTextField txtId;
-    private JTextField txtNombre;
-    private JList<String> listCategorias;
+    ListaCategorias listaCategorias;
+    ListaInsumos listaInsumos;
+    DefaultListModel<String> listModelCategorias;
+    JTextField txtId;
+    JTextField txtNombre;
+    JList<String> listCategorias;
+    JButton btnAgregar;
+    JButton btnEliminar;
+    JButton btnSalir;
 
     public Practica02_a() {
         listaCategorias = new ListaCategorias();
@@ -69,9 +68,9 @@ public class Practica02_a extends JFrame {
         panelPrincipal.add(scrollPane, gbc);
 
         JPanel panelBotones = new JPanel();
-        JButton btnAgregar = new JButton("Agregar");
-        JButton btnEliminar = new JButton("Eliminar");
-        JButton btnSalir = new JButton("Salir");
+        btnAgregar = new JButton("Agregar");
+        btnEliminar = new JButton("Eliminar");
+        btnSalir = new JButton("Salir");
 
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEliminar);
@@ -95,55 +94,5 @@ public class Practica02_a extends JFrame {
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(panelPrincipal, BorderLayout.CENTER);
-
-        btnAgregar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                agregarCategoria();
-            }
-        });
-
-        btnEliminar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                eliminarCategoria();
-            }
-        });
-
-        btnSalir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-    }
-
-    private void agregarCategoria() {
-        String nombre = txtNombre.getText().trim();
-        if (!nombre.isEmpty()) {
-            int id = listModelCategorias.getSize() + 1;
-            Categoria categoria = new Categoria(id, nombre);
-            listaCategorias.agregarCategoria(categoria);
-            listModelCategorias.addElement(id + ": " + nombre);
-            txtNombre.setText("");
-        } else {
-            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void eliminarCategoria() {
-        int selectedIndex = listCategorias.getSelectedIndex();
-        if (selectedIndex != -1) {
-            listaCategorias.eliminarCategoria(listaCategorias.getCategorias().get(selectedIndex));
-            listModelCategorias.remove(selectedIndex);
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione una categoría para eliminar.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Practica02_a().setVisible(true));
     }
 }

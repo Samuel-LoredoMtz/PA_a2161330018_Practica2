@@ -2,15 +2,16 @@ package Parte1;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Practica01_a extends JFrame {
 
-    private JTextField txtId;
-    private JTextField txtNombre;
-    private DefaultListModel<String> listModelCategorias;
-    private JList<String> listCategorias;
+    JTextField txtId;
+    JTextField txtNombre;
+    DefaultListModel<String> listModelCategorias;
+    JList<String> listCategorias;
+    JButton btnAgregar;
+    JButton btnEliminar;
+    JButton btnSalir;
 
     public Practica01_a() {
         setTitle("Practica 01_a - Gestión de Categorías");
@@ -63,39 +64,18 @@ public class Practica01_a extends JFrame {
         gbcBotones.gridx = 0;
         gbcBotones.gridy = 0;
 
-        JButton btnAgregar = new JButton("Agregar");
+        btnAgregar = new JButton("Agregar");
         gbcBotones.anchor = GridBagConstraints.LINE_START;
         panelBotones.add(btnAgregar, gbcBotones);
 
-        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar = new JButton("Eliminar");
         gbcBotones.gridx = 1;
         panelBotones.add(btnEliminar, gbcBotones);
 
-        JButton btnSalir = new JButton("Salir");
+        btnSalir = new JButton("Salir");
         gbcBotones.gridx = 2;
         gbcBotones.anchor = GridBagConstraints.LINE_END;
         panelBotones.add(btnSalir, gbcBotones);
-
-        btnAgregar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                agregarCategoria();
-            }
-        });
-
-        btnEliminar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                eliminarCategoria();
-            }
-        });
-
-        btnSalir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
 
         gbc.gridy = 4;
         gbc.gridx = 0;
@@ -105,31 +85,5 @@ public class Practica01_a extends JFrame {
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(panelPrincipal, BorderLayout.CENTER);
-    }
-
-    private void agregarCategoria() {
-        String nombre = txtNombre.getText().trim();
-        if (!nombre.isEmpty()) {
-            int id = listModelCategorias.getSize() + 1;
-            listModelCategorias.addElement(id + ": " + nombre);
-            txtNombre.setText("");
-        } else {
-            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void eliminarCategoria() {
-        int selectedIndex = listCategorias.getSelectedIndex();
-        if (selectedIndex != -1) {
-            listModelCategorias.remove(selectedIndex);
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione una categoría para eliminar.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Practica01_a().setVisible(true));
     }
 }
